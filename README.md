@@ -1,2 +1,2 @@
 # sync
-a script to synchronize data in different folders
+a script to synchronize and encrypt data in different folders
