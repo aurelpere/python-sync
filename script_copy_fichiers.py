@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # script qui recopie un répertoire dans un autre répertoire
 # définir source et dest avant de lancer le script
@@ -12,56 +13,16 @@ import time
 import filecmp
 
 
-def dechiffrer(source, dest):
-    "la fonction dechiffrer(source,dest) utilise 7zipp pour extraire les archives du repertoire source et ses sous repertoires vers le repertoire dest s'ils n'existent pas ou s'ils sont plus recent (pr le meme nom)"
-    a = listFiles(source)
-    b = listFolders(source)
-    timestampsrc = 0
-    timestampdest = 0
-    identique = []
-    # print(a)
-    for i in a:
-        x = str(i)
-        y = x.replace(".7z", " ")
-        z = y.strip()  # stripping de i
-        if os.path.isfile(str(dest) + "/" + z):  # si le fichier dest existe sans .7z
-            timestampdest = os.stat(str(dest) + "/" + z)
-            timestampsrc = os.stat(str(source) + "/" + i)
-            if (
-                timestampsrc[8] > timestampdest[8]
-            ):  # si le timestamp source est plus récent que celui du dest
-                prgmrun = (
-                    "7z e "
-                    + str(source)
-                    + "/"
-                    + '"'
-                    + i
-                    + '"'
-                    + " -pmdp -o"
-                    + str(dest)
-                )
-                os.system(prgmrun)
-            else:  # sinon on ajoute les fichiers identiques à une liste qui n'est pas utilise
-                identique.append(i)
-        else:  # si le fichier dest n'existe pas
-            prgmrun = (
-                "7z e " + str(source) + "/" + '"' + i + '"' + " -pmdp -o" + str(dest)
-            )
-            os.system(prgmrun)
-    for j in b:
-        if os.path.isdir(str(dest) + "/" + j):
-            print(
-                str(dest)
-                + "/"
-                + j
-                + " existe ou il y a eu un message d'erreur de copie"
-            )
-        else:
-            os.mkdir(str(dest) + "/" + j)
+def mkdirs(newdir, mode=777):
+    try:
+        os.makedirs(newdir, mode)
+    except OSError as err:
+        return err
 
-        dechiffrer(str(source) + "/" + j, str(dest) + "/" + j)
-
-
+def test_mkdirs():
+    mkdirs('testfolder')
+    assert os.path.isdir('testfolder')==True
+    
 def contain(chaine1, chaine2):
     "true si chaine1 inclut ds chaine2"
     chaine1 = chaine1.lower()
@@ -73,10 +34,13 @@ def contain(chaine1, chaine2):
         slicee = ""
         for j in range(L):
             slicee += chaine2[i + j]
-        if slicee == chaine1:  # trouver fonction qui insensibilise à upper/lower
+        if slicee == chaine1: 
             return True
     return False
 
+def test_contain():
+    assert contain('test','this is a test')==True
+    assert contain('test','this is a sentence')==False
 
 def listFiles(folder):
     "la fonction listFiles renvoie une liste des fichiers du répertoire courant contenant kw"
@@ -91,9 +55,13 @@ def listFiles(folder):
             b.append(i)
     return files
 
+def test_listFiles():
+    assert sorted(listFiles('/Users/macbook/github/scraping'))==['boxplot_scraping.png','README.md','scraping.py']
+
+
 
 def listFileskw(folder, kw=""):
-    "la fonction listFiles renvoie une liste des fichiers du répertoire courant contenant kw"
+    "la fonction listFiles renvoie une liste des fichiers du répertoire folder contenant kw"
     os.chdir(folder)
     files = []
     a = os.listdir()
@@ -105,9 +73,13 @@ def listFileskw(folder, kw=""):
             b.append(i)
     return files
 
+def test_listFileskw():
+    assert sorted(listFileskw('/Users/macbook/github/scraping',kw='scraping'))==['boxplot_scraping.png','scraping.py']
+
+
 
 def listFolders(folder):
-    "la fonction listFolders renvoie une liste des noms des sousrépertoires du repertoire courant contenant kw"
+    "la fonction listFolders renvoie une liste des noms des sousrépertoires du repertoire folder"
     os.chdir(folder)
     folders = []
     a = os.listdir()
@@ -119,26 +91,24 @@ def listFolders(folder):
             b.append(i)
     return folders
 
+def test_listFolders():
+    assert sorted(listFolders('/Users/macbook/github/scraping'))==['subfolder']
 
-def dicoisation(dico, alb):
-    "dicoise"
-    a = listFiles(alb)
-    b = listFolders(alb)
-    dico[alb] = a
+
+
+def dicoisation(dico, folder):
+    "renvoie un dictionnaire des fichiers et repertoires de folder"
+    a = listFiles(folder)
+    b = listFolders(folder)
+    dico[folder] = a
     for m in b:
-        dico[alb + "/" + m] = listFiles(alb + "/" + m)
-        dicoisation(dico, alb + "/" + m)  # dico dans dico
+        dico[folder + "/" + m] = listFiles(folder + "/" + m)
+        dicoisation(dico, folder + "/" + m)
     return dico
 
+def test_dicoisation():
+    assert (dicoisation('/Users/macbook/github/scraping'))=={'/Users/macbook/github/scraping':['boxplot_scraping.png','README.md','scraping.py'],'/Users/macbook/github/scraping/subfolder':['']}
 
-def goodcopy(dst, src):
-    fi = open(src, "rb")
-    filist = fi.readlines()
-    fi0 = open(dst + "/" + str(src), "wb")
-    for i in filist:
-        fi0.write(i)
-    fi.close()
-    fi0.close()
 
 
 def recopier(source, dest):
@@ -175,7 +145,13 @@ def recopier(source, dest):
             mkdirs(str(dest) + "/" + j)
         recopier(str(source) + "/" + j, str(dest) + "/" + j)
 
+def test_recopier():
+    recopier('/Users/macbook/github/scraping','/Users/macbook')
+    assert os.path.isfile('/Users/macbook/boxplot_scraping.png')==True
+    assert os.path.isfile('/Users/macbook/README.md')==True
+    assert os.path.isfile('/Users/macbook/scraping.py')==True
 
+    
 def chiffrer(source, dest):
     "la fonction chiffrer(source,dest) 7zippe avec chiffrement les fichiers du repertoire source ainsi que ses sous repertoire vers le repertoire dest s'ils n'existent pas ou s'ils sont plus recent (pr le meme nom)"
     a = listFiles(source)
@@ -237,66 +213,75 @@ def chiffrer(source, dest):
 
         chiffrer(str(source) + "/" + j, str(dest) + "/" + j)
 
+def test_chiffrer():
+    chiffrer('/Users/macbook/github/scraping','/Users/macbook')
+    assert os.path.isfile('/Users/macbook/boxplot_scraping.png.7z')==True
+    assert os.path.isfile('/Users/macbook/README.md.7z')==True
+    assert os.path.isfile('/Users/macbook/scraping.py.7z')==True
 
-def mkdirs(newdir, mode=777):
-    try:
-        os.makedirs(newdir, mode)
-    except OSError as err:
-        return err
+        
+def dechiffrer(source, dest):
+    "la fonction dechiffrer(source,dest) utilise 7zipp pour extraire les archives du repertoire source et ses sous repertoires vers le repertoire dest s'ils n'existent pas ou s'ils sont plus recent (pr le meme nom)"
+    a = listFiles(source)
+    b = listFolders(source)
+    timestampsrc = 0
+    timestampdest = 0
+    identique = []
+    # print(a)
+    for i in a:
+        x = str(i)
+        y = x.replace(".7z", " ")
+        z = y.strip()  # stripping de i
+        if os.path.isfile(str(dest) + "/" + z):  # si le fichier dest existe sans .7z
+            timestampdest = os.stat(str(dest) + "/" + z)
+            timestampsrc = os.stat(str(source) + "/" + i)
+            if (
+                timestampsrc[8] > timestampdest[8]
+            ):  # si le timestamp source est plus récent que celui du dest
+                prgmrun = (
+                    "7z e "
+                    + str(source)
+                    + "/"
+                    + '"'
+                    + i
+                    + '"'
+                    + " -pmdp -o"
+                    + str(dest)
+                )
+                os.system(prgmrun)
+            else:  # sinon on ajoute les fichiers identiques à une liste qui n'est pas utilise
+                identique.append(i)
+        else:  # si le fichier dest n'existe pas
+            prgmrun = (
+                "7z e " + str(source) + "/" + '"' + i + '"' + " -pmdp -o" + str(dest)
+            )
+            os.system(prgmrun)
+    for j in b:
+        if os.path.isdir(str(dest) + "/" + j):
+            print(
+                str(dest)
+                + "/"
+                + j
+                + " existe ou il y a eu un message d'erreur de copie"
+            )
+        else:
+            os.mkdir(str(dest) + "/" + j)
 
+        dechiffrer(str(source) + "/" + j, str(dest) + "/" + j)
 
-# chiffrement
-# path="c:/program files/veracrypt"
-# os.chdir(path)
-# prgmrun="veracrypt /v testlocker /l h /p "+ currpass + " /q"
-# x=subprocess.call(prgmrun)
-# print(x)
-# 7z a -mhe=on -pmdp mdp "Nouveau document" -scrc SHA256 -stl
+def test_dechiffrer():
+    chiffrer('/Users/macbook/github/scraping','/Users/macbook')
+    dechiffrer('/Users/macbook','/Users/macbook/testdechiffrer')
+    assert os.path.isfile('/Users/macbook/testdechiffrer/boxplot_scraping.png')==True
+    assert os.path.isfile('/Users/macbook/testdechiffrer/README.md')==True
+    assert os.path.isfile('/Users/macbook/testdechiffrer/scraping.py')==True
+        
 
+if __name__ == "__main__":
+    a = dicoisation({}, "/home/user/Téléchargements")
+    keys = list(a.keys())
+    for i in keys:  # i est un repertoire
+        if contain("brave", i):
+            print(i)
+            recopier(i, "/home/user/df")
 
-# __main__
-
-
-timedebutaller = [
-    time.localtime()[2],
-    "0" + str(time.localtime()[1]),
-    time.localtime()[0],
-    str(time.localtime()[3]) + "h",
-    str(time.localtime()[4]) + "mn",
-]
-print("enregistrement heure debut")
-a = dicoisation({}, "/home/user/Téléchargements")
-# print(a)
-keys = list(a.keys())
-# print(keys)
-for i in keys:  # i est un repertoire
-    if contain("brave", i):
-        print(i)
-        recopier(i, "/home/user/df")
-    v = a[i]  # liste des fichiers du rep i
-    print(v)
-    for j in v:
-        if contain("brave", j) and os.path.isfile(j):
-            print(j), print(i)
-            g = str(i)
-            g.replace("/home/user/Téléchargements", "/home/user/df")
-            mkdirs(g)
-            run = goodcopy(g, j)
-
-timefinaller = [
-    time.localtime()[2],
-    "0" + str(time.localtime()[1]),
-    time.localtime()[0],
-    str(time.localtime()[3]) + "h",
-    str(time.localtime()[4]) + "mn",
-]
-print("enregistrement heure fin copie aller")
-print("copie didf")
-timefinretour = [
-    time.localtime()[2],
-    "0" + str(time.localtime()[1]),
-    time.localtime()[0],
-    str(time.localtime()[3]) + "h",
-    str(time.localtime()[4]) + "mn",
-]
-print("enregistrement heure fin copie retour")
