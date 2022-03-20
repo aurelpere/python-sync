@@ -1,0 +1,7 @@
+pylint
+pytest
+pytest-cov
+yapf
+genbadge
+defusedxml
+import py7zr
