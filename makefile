@@ -10,7 +10,7 @@ test:
 coverage_badge:
 	genbadge coverage
 cleaning:
-    rm -rf reports
+	rm -rf reports
 git:
 	git config --local user.email "aurel.pere@gmail.com"
 	git config --local user.name "aurelpere"
