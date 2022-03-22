@@ -14,11 +14,11 @@ a script to synchronize and encrypt data in different folders
   
 `Sync('origin_folder','destination_folder',keyword='your_keyword').copy()`
 >will copy files including keyword in their names from origin_folder to desination_folder.   
-\
+<br>
     
 `Sync('origin_folder','destination_folder',keyword='your_keyword').cypher('password')`
 >will cypher with 7zip and copy files including keyword in their names from origin_folder to desination_folder.  
-\   
+<br>
     
 `Sync('origin_folder','destination_folder',keyword='your_keyword').decypher('password')`
 >will decypher with 7zip and copy files including keyword in their names from origin_folder to desination_folder. 
