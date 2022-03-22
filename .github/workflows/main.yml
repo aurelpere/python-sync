@@ -24,6 +24,9 @@ jobs: # This workflow contains a single job called "build"
     - name: make a test coverage badge with genbadge
       run: |
         make coverage_badge
+    - name: clean pytest report
+      run: |
+        make clean
     - name: Commit files # commit the badge file into the repository
       run: |
         make git
