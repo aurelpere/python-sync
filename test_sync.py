@@ -20,8 +20,8 @@ def test_decorated_copyfile():
         Sync('2', '1').copyfile('2', '1', f'{file}.txt')
         assert os.path.isfile(f'1/{file}.txt') is True
     time.sleep(3)
-    with open(f'0/4.txt', 'w', encoding='utf-8') as fileo:
-        fileo.write(f'testfiletestfile')
+    with open('0/4.txt', 'w', encoding='utf-8') as fileo:
+        fileo.write('testfiletestfile')
     shutil.copy2('2/5.txt', '0/5.txt')  # 5 same timestamp
     Sync('0', '1').copyfile('0', '1', '4.txt')
     assert os.stat('1/4.txt')[8] > os.stat('2/4.txt')[8]
@@ -91,9 +91,9 @@ def test_decorated_copyfiled():
     storedtimestamp4 = os.stat('0/4.txt')[8]
     storedtimestamp5 = os.stat('0/5.txt')[8]
     time.sleep(1)
-    with open(f'2/4.txt', 'w', encoding='utf-8') as fileo:
-        fileo.write(f'testfiletestfile')
-    Sync('2', '1').copyfilec('2', '1', f'4.txt', 'pw')  # 4 more recent
+    with open('2/4.txt', 'w', encoding='utf-8') as fileo:
+        fileo.write('testfiletestfile')
+    Sync('2', '1').copyfilec('2', '1', '4.txt', 'pw')  # 4 more recent
     Sync('1', '0').copyfiled('1', '0', '4.txt.7z', 'pw')
     assert os.stat('0/4.txt')[8] > storedtimestamp4
     Sync('1', '0').copyfiled('1', '0', '5.txt.7z', 'pw')
@@ -180,16 +180,3 @@ def test_decypherfolders():
 def test_tildexpand():
     "test of tildexpand function"
     assert os.path.expanduser('~/') in Sync.tildexpand('~/blab/bla')
-
-
-if __name__ == "__main__":
-    os.makedirs('1')
-    os.makedirs('2')
-    with open('2/testfile.txt', 'w') as fileopen:
-        fileopen.write('this is a test file')
-
-    def f(src, dst, file):
-        shutil.copy(f'{src}/{file}', f'{dst}/{file}')
-
-    a = Sync('2', '1').fileprocessing(f('2', '1', 'testfile.txt'))
-    print(a)

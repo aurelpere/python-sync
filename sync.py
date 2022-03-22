@@ -122,7 +122,7 @@ class Sync():
                          follow_symlinks=False)
         except Exception as err:
             print(err)
-            self.pythoncopyfile(f'{src}/{file}', f'{dst}/{file}')
+            Sync.pythoncopyfile(f'{src}/{file}', f'{dst}/{file}')
 
     @staticmethod
     @fileprocessing
