@@ -30,8 +30,8 @@ jobs: # This workflow contains a single job called "build"
     - name: Commit files # commit the badge file into the repository
       run: |
         make git
-    - name: Push changes # push the output file to your repo
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        force: true
+    #- name: Push changes # push the output file to your repo
+    #  uses: ad-m/github-push-action@master
+    #  with:
+    #    github_token: ${{ secrets.GITHUB_TOKEN }}
+    #    force: true
