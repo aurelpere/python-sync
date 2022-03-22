@@ -3,14 +3,14 @@
 # sync
 a script to synchronize and encrypt data in different folders
 
-usage in command line:<br>
+## usage in command line:<br>
 `python script_copy_fichiers.py -o origin_folder -d destination_folder`<br>
 
                       options :   -k keyword: will copy files only if keyword included in filenames
                                   -c password will cypher with 7zip with the password provided
                                   -dc password will decypher with 7zip with the password provided
 
-usage in python:<br>
+## usage in python:<br>
 `Sync('origin_folder','destination_folder',keyword='your_keyword').copy()`
 >will copy files including keyword in their names from origin_folder to desination_folder 
  
