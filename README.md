@@ -1,4 +1,4 @@
-[![Test-Lint-Format](https://github.com/aurelpere/python-sync/actions/workflows/main.yml/badge.svg)](https://github.com/aurelpere/python-sync/actions/workflows/main.yml) ![test-coverage badge](./coverage-badge.svg) <a href="https://codeclimate.com/github/aurelpere/python-sync/test_coverage">  [![Maintainability](https://api.codeclimate.com/v1/badges/134ac26217ff8421bdf1/maintainability)](https://codeclimate.com/github/aurelpere/python-sync/maintainability)
+[![Test-Lint-Format](https://github.com/aurelpere/python-sync/actions/workflows/main.yml/badge.svg)](https://github.com/aurelpere/python-sync/actions/workflows/main.yml) ![test-coverage badge](./coverage-badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/134ac26217ff8421bdf1/maintainability)](https://codeclimate.com/github/aurelpere/python-sync/maintainability)
   
 # sync
 a script to synchronize and encrypt data in different folders
