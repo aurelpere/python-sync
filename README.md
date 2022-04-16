@@ -4,7 +4,7 @@
 a script to synchronize and encrypt data in different folders
 
 ## usage in command line:<br>
-`python script_copy_fichiers.py -o origin_folder -d destination_folder`<br>
+`python sync.py -o origin_folder -d destination_folder`<br>
 
                       options :   -k keyword: will copy files only if keyword included in filenames
                                   -c password will cypher with 7zip with the password provided
